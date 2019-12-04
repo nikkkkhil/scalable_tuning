@@ -1,23 +1,11 @@
-.. image:: https://github.com/ray-project/ray/raw/master/doc/source/images/ray_header_logo.png
 
-.. image:: https://travis-ci.com/ray-project/ray.svg?branch=master
-    :target: https://travis-ci.com/ray-project/ray
+**scalable_tuning is a fast and simple framework for building and running distributed applications.**
 
-.. image:: https://readthedocs.org/projects/ray/badge/?version=latest
-    :target: http://ray.readthedocs.io/en/latest/?badge=latest
-
-|
-
-
-**Ray is a fast and simple framework for building and running distributed applications.**
-
-Ray is packaged with the following libraries for accelerating machine learning workloads:
+scalable_tuning is packaged with the following libraries for accelerating machine learning workloads:
 
 - `Tune`_: Scalable Hyperparameter Tuning
 - `RLlib`_: Scalable Reinforcement Learning
-- `Distributed Training <https://ray.readthedocs.io/en/latest/distributed_training.html>`__
 
-Install Ray with: ``pip install ray``. For nightly wheels, see the `Installation page <https://ray.readthedocs.io/en/latest/installation.html>`__.
 
 Quick Start
 -----------
@@ -26,25 +14,25 @@ Execute Python functions in parallel.
 
 .. code-block:: python
 
-    import ray
-    ray.init()
+    import scalable_tuning
+    scalable_tuning.init()
 
-    @ray.remote
+    @scalable_tuning.remote
     def f(x):
         return x * x
 
     futures = [f.remote(i) for i in range(4)]
-    print(ray.get(futures))
+    print(scalable_tuning.get(futures))
 
-To use Ray's actor model:
+To use scalable_tuning's actor model:
 
 .. code-block:: python
 
 
-    import ray
-    ray.init()
+    import scalable_tuning
+    scalable_tuning.init()
 
-    @ray.remote
+    @scalable_tuning.remote
     class Counter(object):
         def __init__(self):
             self.n = 0
@@ -58,19 +46,16 @@ To use Ray's actor model:
     counters = [Counter.remote() for i in range(4)]
     [c.increment.remote() for c in counters]
     futures = [c.read.remote() for c in counters]
-    print(ray.get(futures))
+    print(scalable_tuning.get(futures))
 
 
-Ray programs can run on a single machine, and can also seamlessly scale to large clusters. To execute the above Ray script in the cloud, just download `this configuration file <https://github.com/ray-project/ray/blob/master/python/ray/autoscaler/aws/example-full.yaml>`__, and run:
 
-``ray submit [CLUSTER.YAML] example.py --start``
+``scalable_tuning submit [CLUSTER.YAML] example.py --start``
 
-Read more about `launching clusters <https://ray.readthedocs.io/en/latest/autoscaling.html>`_.
 
 Tune Quick Start
 ----------------
 
-.. image:: https://github.com/ray-project/ray/raw/master/doc/source/images/tune-wide.png
 
 `Tune`_ is a library for hyperparameter tuning at any scale.
 
@@ -84,7 +69,7 @@ To run this example, you will need to install the following:
 
 .. code-block:: bash
 
-    $ pip install ray[tune] torch torchvision filelock
+    $ pip install scalable_tuning[tune] torch torchvision filelock
 
 
 This example runs a parallel grid search to train a Convolutional Neural Network using PyTorch.
@@ -93,8 +78,8 @@ This example runs a parallel grid search to train a Convolutional Neural Network
 
 
     import torch.optim as optim
-    from ray import tune
-    from ray.tune.examples.mnist_pytorch import (
+    from scalable_tuning import tune
+    from scalable_tuning.tune.examples.mnist_pytorch import (
         get_data_loaders, ConvNet, train, test)
 
 
@@ -120,30 +105,29 @@ If TensorBoard is installed, automatically visualize all trial results:
 
 .. code-block:: bash
 
-    tensorboard --logdir ~/ray_results
+    tensorboard --logdir ~/scalable_tuning_results
 
-.. _`Tune`: https://ray.readthedocs.io/en/latest/tune.html
-.. _`Population Based Training (PBT)`: https://ray.readthedocs.io/en/latest/tune-schedulers.html#population-based-training-pbt
-.. _`Vizier's Median Stopping Rule`: https://ray.readthedocs.io/en/latest/tune-schedulers.html#median-stopping-rule
-.. _`HyperBand/ASHA`: https://ray.readthedocs.io/en/latest/tune-schedulers.html#asynchronous-hyperband
+.. _`Tune`: https://scalable_tuning.readthedocs.io/en/latest/tune.html
+.. _`Population Based Training (PBT)`: https://scalable_tuning.readthedocs.io/en/latest/tune-schedulers.html#population-based-training-pbt
+.. _`Vizier's Median Stopping Rule`: https://scalable_tuning.readthedocs.io/en/latest/tune-schedulers.html#median-stopping-rule
+.. _`HyperBand/ASHA`: https://scalable_tuning.readthedocs.io/en/latest/tune-schedulers.html#asynchronous-hyperband
 
 RLlib Quick Start
 -----------------
 
-.. image:: https://github.com/ray-project/ray/raw/master/doc/source/images/rllib-wide.jpg
 
-`RLlib`_ is an open-source library for reinforcement learning built on top of Ray that offers both high scalability and a unified API for a variety of applications.
+`RLlib`_ is an open-source library for reinforcement learning built on top of scalable_tuning that offers both high scalability and a unified API for a variety of applications.
 
 .. code-block:: bash
 
   pip install tensorflow  # or tensorflow-gpu
-  pip install ray[rllib]  # also recommended: ray[debug]
+  pip install scalable_tuning[rllib]  # also recommended: scalable_tuning[debug]
 
 .. code-block:: python
 
     import gym
     from gym.spaces import Discrete, Box
-    from ray import tune
+    from scalable_tuning import tune
 
     class SimpleCorridor(gym.Env):
         def __init__(self, config):
@@ -171,44 +155,6 @@ RLlib Quick Start
             "num_workers": 4,
             "env_config": {"corridor_length": 5}})
 
-.. _`RLlib`: https://ray.readthedocs.io/en/latest/rllib.html
+.. _`RLlib`: https://scalable_tuning.readthedocs.io/en/latest/rllib.html
 
 
-More Information
-----------------
-
-- `Documentation`_
-- `Tutorial`_
-- `Blog`_
-- `Ray paper`_
-- `Ray HotOS paper`_
-- `RLlib paper`_
-- `Tune paper`_
-
-.. _`Documentation`: http://ray.readthedocs.io/en/latest/index.html
-.. _`Tutorial`: https://github.com/ray-project/tutorial
-.. _`Blog`: https://ray-project.github.io/
-.. _`Ray paper`: https://arxiv.org/abs/1712.05889
-.. _`Ray HotOS paper`: https://arxiv.org/abs/1703.03924
-.. _`RLlib paper`: https://arxiv.org/abs/1712.09381
-.. _`Tune paper`: https://arxiv.org/abs/1807.05118
-
-Getting Involved
-----------------
-
-- `ray-dev@googlegroups.com`_: For discussions about development or any general
-  questions.
-- `StackOverflow`_: For questions about how to use Ray.
-- `GitHub Issues`_: For reporting bugs and feature requests.
-- `Pull Requests`_: For submitting code contributions.
-- `Meetup Group`_: Join our meetup group.
-- `Community Slack`_: Join our Slack workspace.
-- `Twitter`_: Follow updates on Twitter.
-
-.. _`ray-dev@googlegroups.com`: https://groups.google.com/forum/#!forum/ray-dev
-.. _`GitHub Issues`: https://github.com/ray-project/ray/issues
-.. _`StackOverflow`: https://stackoverflow.com/questions/tagged/ray
-.. _`Pull Requests`: https://github.com/ray-project/ray/pulls
-.. _`Meetup Group`: https://www.meetup.com/Bay-Area-Ray-Meetup/
-.. _`Community Slack`: https://forms.gle/9TSdDYUgxYs8SA9e8
-.. _`Twitter`: https://twitter.com/raydistributed
